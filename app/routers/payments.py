@@ -62,7 +62,7 @@ async def payment_webhook(
     """
     raw = await request.body()
     expected = hmac.new(settings.WEBHOOK_SECRET.encode(), raw, hashlib.sha256).hexdigest()
-    if not x_signature or not hmac.compare_digest(x_signature, expected):
+    if not x_signature or not hmac.compare_digest(x_signature.encode(), expected.encode()):
         raise HTTPException(401, "Invalid webhook signature")
     try:
         event = WebhookIn.model_validate_json(raw)
